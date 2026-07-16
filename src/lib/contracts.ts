@@ -22,6 +22,10 @@ export type Contract = {
   sign_token: string;
   signer_name: string | null;
   signed_at: string | null;
+  body_sha256: string | null;
+  viewed_at: string | null;
+  signer_ip: string | null;
+  signer_user_agent: string | null;
   created_at: string;
 };
 

@@ -65,7 +65,23 @@ export function ContractsView({
                   <td>{contract.value_cents ? centsToDollars(contract.value_cents) : "—"}</td>
                   <td>{new Date(contract.created_at).toLocaleDateString()}</td>
                   <td>
-                    <span className={`badge ${CONTRACT_STATUS_BADGE[contract.status]}`}>{contract.status}</span>
+                    <span
+                      className={`badge ${CONTRACT_STATUS_BADGE[contract.status]}`}
+                      title={
+                        contract.status === "signed"
+                          ? [
+                              `Signed by ${contract.signer_name}`,
+                              contract.signed_at ? new Date(contract.signed_at).toLocaleString() : null,
+                              contract.signer_ip ? `IP ${contract.signer_ip}` : null,
+                              contract.body_sha256 ? `Document hash ${contract.body_sha256.slice(0, 12)}…` : null,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")
+                          : undefined
+                      }
+                    >
+                      {contract.status}
+                    </span>
                   </td>
                   <td>
                     <button

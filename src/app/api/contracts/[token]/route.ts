@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/service";
 
-export async function GET(_request: Request, { params }: { params: Promise<{ token: string }> }) {
+function clientIpFrom(request: Request) {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  return forwardedFor?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || null;
+}
+
+export async function GET(request: Request, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const supabase = createServiceClient();
 
@@ -16,7 +21,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
   }
 
   if (contract.status === "sent") {
-    await supabase.from("contracts").update({ status: "viewed" }).eq("sign_token", token);
+    await supabase
+      .from("contracts")
+      .update({ status: "viewed", viewed_at: new Date().toISOString() })
+      .eq("sign_token", token);
     contract.status = "viewed";
   }
 
@@ -48,7 +56,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
 
   const { error } = await supabase
     .from("contracts")
-    .update({ status: "signed", signer_name: signerName.trim(), signed_at: new Date().toISOString() })
+    .update({
+      status: "signed",
+      signer_name: signerName.trim(),
+      signed_at: new Date().toISOString(),
+      signer_ip: clientIpFrom(request),
+      signer_user_agent: request.headers.get("user-agent"),
+    })
     .eq("sign_token", token);
 
   if (error) {

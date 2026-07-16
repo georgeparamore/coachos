@@ -32,13 +32,16 @@ same tokens, same layout, same components.
 - [x] Stripe subscriptions: generate a Checkout link for a client/plan, webhook syncs status
 - [x] Invoices: one-time Stripe invoices, generated + sent from the Invoices page, webhook marks paid
 - [x] Contracts: editable templates (seeded per coach), send a signable link, public `/sign/[token]`
-      page for the client, status tracked draft → sent → viewed → signed
+      page for the client, status tracked draft → sent → viewed → signed, with an audit trail
+      (signer IP, user agent, viewed timestamp, and a SHA-256 hash of the exact text signed —
+      not identity verification or a DocuSign-grade certificate, just a defensible record)
 - [ ] Courses & community are still stubbed with the ported UI and a "Phase N" notice
 
 ## Local setup
 
 1. Create a Supabase project.
-2. In the SQL editor, run `supabase/migrations/0001_init.sql`, then `0002_monetization.sql`.
+2. In the SQL editor, run `supabase/migrations/0001_init.sql`, then `0002_monetization.sql`, then
+   `0003_contract_audit_trail.sql`, in that order.
 3. Copy `.env.example` to `.env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Project Settings → API
    - `SUPABASE_SERVICE_ROLE_KEY` — same page, the **secret** key (server-only, powers the public
