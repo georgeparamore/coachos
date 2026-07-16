@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { CalendarEvent, EventType } from "@/lib/events";
 import { EVENT_TYPE_LABEL } from "@/lib/events";
 import type { Lead } from "@/lib/leads";
+import { getErrorMessage } from "@/lib/errors";
 
 function toLocalInputValue(date: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -64,7 +65,7 @@ export function EventFormModal({
         lead_id: leadId || null,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }

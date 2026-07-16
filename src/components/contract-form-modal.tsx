@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Lead } from "@/lib/leads";
 import type { ContractTemplate } from "@/lib/contracts";
+import { getErrorMessage } from "@/lib/errors";
 
 export function ContractFormModal({
   leads,
@@ -75,7 +76,7 @@ export function ContractFormModal({
       setSignLink(`${appUrl}/sign/${data.sign_token}`);
       onCreated();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LEAD_STAGES, type Lead, type LeadInput, type LeadStage } from "@/lib/leads";
+import { getErrorMessage } from "@/lib/errors";
 
 type Props = {
   lead: Lead | null;
@@ -38,7 +39,7 @@ export function LeadFormModal({ lead, onClose, onSave, onDelete }: Props) {
         notes,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }

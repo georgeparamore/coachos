@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Lead } from "@/lib/leads";
+import { getErrorMessage } from "@/lib/errors";
 
 type Props = {
   leads: Lead[];
@@ -47,7 +48,7 @@ export function InvoiceFormModal({ leads, onClose, onCreated }: Props) {
       if (!res.ok) throw new Error(data.error || "Failed to create invoice");
       onCreated();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }

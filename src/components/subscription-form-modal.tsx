@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Lead } from "@/lib/leads";
+import { getErrorMessage } from "@/lib/errors";
 
 const PLAN_OPTIONS = [
   { key: "starter", label: "Starter — $120/mo" },
@@ -50,7 +51,7 @@ export function SubscriptionFormModal({
       setCheckoutUrl(data.url);
       onCreated();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }

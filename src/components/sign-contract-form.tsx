@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getErrorMessage } from "@/lib/errors";
 
 export function SignContractForm({ token }: { token: string }) {
   const [signerName, setSignerName] = useState("");
@@ -22,7 +23,7 @@ export function SignContractForm({ token }: { token: string }) {
       if (!res.ok) throw new Error(data.error || "Failed to sign");
       setSigned(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }
