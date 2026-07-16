@@ -1,21 +1,27 @@
-export default function InvoicesPage() {
+import { createClient } from "@/lib/supabase/server";
+import { InvoicesView } from "@/components/invoices-view";
+import type { Invoice } from "@/lib/billing";
+import type { Lead } from "@/lib/leads";
+
+export default async function InvoicesPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [{ data: invoices }, { data: leads }] = await Promise.all([
+    supabase.from("invoices").select("*").eq("coach_id", user!.id).order("created_at", { ascending: false }),
+    supabase
+      .from("leads")
+      .select("*")
+      .eq("coach_id", user!.id)
+      .eq("stage", "signed")
+      .order("created_at", { ascending: false }),
+  ]);
+
   return (
     <div className="page">
-      <div className="page-header">
-        <div>
-          <div className="page-title">Invoices</div>
-          <div className="page-sub">One-time payments and billing history</div>
-        </div>
-      </div>
-
-      <div className="notes-box">Phase 2: invoices generate and sync from Stripe once billing is connected.</div>
-
-      <div className="card">
-        <div className="card-title">Recent invoices</div>
-        <div className="empty-state">
-          <p>No invoices yet. Connect Stripe in Phase 2 to start sending and tracking payments.</p>
-        </div>
-      </div>
+      <InvoicesView invoices={(invoices as Invoice[]) ?? []} leads={(leads as Lead[]) ?? []} />
     </div>
   );
 }

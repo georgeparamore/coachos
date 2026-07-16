@@ -1,54 +1,28 @@
-export default function ContractsPage() {
+import { createClient } from "@/lib/supabase/server";
+import { ContractsView } from "@/components/contracts-view";
+import type { Contract, ContractTemplate } from "@/lib/contracts";
+import type { Lead } from "@/lib/leads";
+
+export default async function ContractsPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [{ data: contracts }, { data: templates }, { data: leads }] = await Promise.all([
+    supabase.from("contracts").select("*").eq("coach_id", user!.id).order("created_at", { ascending: false }),
+    supabase.from("contract_templates").select("*").eq("coach_id", user!.id).order("created_at", { ascending: true }),
+    supabase.from("leads").select("*").eq("coach_id", user!.id).order("created_at", { ascending: false }),
+  ]);
+
   return (
     <div className="page">
-      <div className="page-header">
-        <div>
-          <div className="page-title">Contracts</div>
-          <div className="page-sub">Digital agreements and e-signatures</div>
-        </div>
-      </div>
-
-      <div className="notes-box">
-        Phase 2: contract templates, send/track, and e-signature capture wire up alongside the
-        proposal builder.
-      </div>
-
-      <div className="card">
-        <div className="card-title">Contract templates</div>
-        <div className="list-row">
-          <div className="list-row-left">
-            <div>
-              <div className="name">Elite coaching agreement</div>
-              <div className="sub">1:1 coaching · 3-month minimum</div>
-            </div>
-          </div>
-          <button className="btn btn-sm" disabled>
-            Use template
-          </button>
-        </div>
-        <div className="list-row">
-          <div className="list-row-left">
-            <div>
-              <div className="name">Group program agreement</div>
-              <div className="sub">Community &amp; group coaching</div>
-            </div>
-          </div>
-          <button className="btn btn-sm" disabled>
-            Use template
-          </button>
-        </div>
-        <div className="list-row">
-          <div className="list-row-left">
-            <div>
-              <div className="name">VIP day agreement</div>
-              <div className="sub">One-time intensive session</div>
-            </div>
-          </div>
-          <button className="btn btn-sm" disabled>
-            Use template
-          </button>
-        </div>
-      </div>
+      <ContractsView
+        contracts={(contracts as Contract[]) ?? []}
+        templates={(templates as ContractTemplate[]) ?? []}
+        leads={(leads as Lead[]) ?? []}
+        coachId={user!.id}
+      />
     </div>
   );
 }
