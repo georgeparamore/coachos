@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { AVATAR_CLASSES, initialsOf } from "@/lib/format";
 
@@ -61,7 +62,12 @@ export default async function DashboardPage() {
           </div>
         ) : (
           recentLeads.map((lead) => (
-            <div className="list-row" key={lead.id}>
+            <Link
+              href={`/crm?lead=${lead.id}`}
+              className="list-row"
+              key={lead.id}
+              style={{ cursor: "pointer", textDecoration: "none", color: "inherit" }}
+            >
               <div className="list-row-left">
                 <div className={`avatar ${AVATAR_CLASSES[lead.id.charCodeAt(0) % AVATAR_CLASSES.length]}`}>
                   {initialsOf(lead.name)}
@@ -72,7 +78,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
               <span className="badge badge-blue">{lead.stage.replace("_", " ")}</span>
-            </div>
+            </Link>
           ))
         )}
       </div>

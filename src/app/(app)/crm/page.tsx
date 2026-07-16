@@ -2,7 +2,12 @@ import { createClient } from "@/lib/supabase/server";
 import { CrmBoard } from "@/components/crm-board";
 import type { Lead } from "@/lib/leads";
 
-export default async function CrmPage() {
+export default async function CrmPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lead?: string }>;
+}) {
+  const { lead: initialLeadId } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -23,7 +28,7 @@ export default async function CrmPage() {
         </div>
       </div>
 
-      <CrmBoard initialLeads={(leads as Lead[]) ?? []} coachId={user!.id} />
+      <CrmBoard initialLeads={(leads as Lead[]) ?? []} coachId={user!.id} initialLeadId={initialLeadId} />
     </div>
   );
 }

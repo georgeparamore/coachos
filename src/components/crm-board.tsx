@@ -1,15 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { LEAD_STAGES, type Lead, type LeadInput } from "@/lib/leads";
 import { LeadFormModal } from "@/components/lead-form-modal";
 
-export function CrmBoard({ initialLeads, coachId }: { initialLeads: Lead[]; coachId: string }) {
+export function CrmBoard({
+  initialLeads,
+  coachId,
+  initialLeadId,
+}: {
+  initialLeads: Lead[];
+  coachId: string;
+  initialLeadId?: string;
+}) {
   const router = useRouter();
   const [leads, setLeads] = useState(initialLeads);
-  const [editingLead, setEditingLead] = useState<Lead | null | undefined>(undefined);
+  const [editingLead, setEditingLead] = useState<Lead | null | undefined>(() =>
+    initialLeadId ? initialLeads.find((l) => l.id === initialLeadId) : undefined,
+  );
+
+  useEffect(() => {
+    if (initialLeadId) router.replace("/crm");
+    // Only meant to run once, to clean up the URL param this page loaded with.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleSave(input: LeadInput) {
     const supabase = createClient();
