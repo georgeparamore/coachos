@@ -1,0 +1,43 @@
+export type NavItem = {
+  href: string;
+  label: string;
+  icon: string;
+};
+
+export type NavSection = {
+  label: string;
+  items: NavItem[];
+};
+
+export const NAV_SECTIONS: NavSection[] = [
+  {
+    label: "Overview",
+    items: [{ href: "/dashboard", label: "Dashboard", icon: "grid" }],
+  },
+  {
+    label: "Clients",
+    items: [
+      { href: "/crm", label: "CRM & pipeline", icon: "users" },
+      { href: "/deals", label: "Deal evaluations", icon: "file-text" },
+    ],
+  },
+  {
+    label: "Monetization",
+    items: [
+      { href: "/subscriptions", label: "Subscriptions", icon: "refresh" },
+      { href: "/invoices", label: "Invoices", icon: "invoice" },
+      { href: "/contracts", label: "Contracts", icon: "pen" },
+    ],
+  },
+  {
+    label: "Education",
+    items: [
+      { href: "/courses", label: "Courses & programs", icon: "play" },
+      { href: "/community", label: "Community", icon: "message" },
+    ],
+  },
+  {
+    label: "Account",
+    items: [{ href: "/settings", label: "Settings", icon: "gear" }],
+  },
+];
