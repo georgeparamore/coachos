@@ -460,6 +460,16 @@ a {
 .list-row:last-child {
   border-bottom: none;
 }
+.list-row-clickable {
+  border-radius: var(--radius);
+  padding-left: 8px;
+  padding-right: 8px;
+  margin: 0 -8px;
+  transition: background 0.12s;
+}
+.list-row-clickable:hover {
+  background: var(--surface2);
+}
 .list-row-left {
   display: flex;
   align-items: center;

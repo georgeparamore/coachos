@@ -64,9 +64,9 @@ export default async function DashboardPage() {
           recentLeads.map((lead) => (
             <Link
               href={`/crm?lead=${lead.id}`}
-              className="list-row"
+              className="list-row list-row-clickable"
               key={lead.id}
-              style={{ cursor: "pointer", textDecoration: "none", color: "inherit" }}
+              style={{ textDecoration: "none", color: "inherit" }}
             >
               <div className="list-row-left">
                 <div className={`avatar ${AVATAR_CLASSES[lead.id.charCodeAt(0) % AVATAR_CLASSES.length]}`}>
