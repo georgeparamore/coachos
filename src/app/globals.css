@@ -25,6 +25,8 @@
   --red-text: #791f1f;
   --accent: #534ab7;
   --accent-light: #eeedfe;
+  --nav-active-bg: #e6f1fb;
+  --nav-active-text: #0c447c;
   --success: #1d9e75;
   --warning: #ef9f27;
   --danger: #e24b4a;
@@ -58,6 +60,8 @@
   --red-text: #f7c1c1;
   --accent: #7f77dd;
   --accent-light: #26215c;
+  --nav-active-bg: #042c53;
+  --nav-active-text: #b5d4f4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -86,6 +90,8 @@
     --red-text: #f7c1c1;
     --accent: #7f77dd;
     --accent-light: #26215c;
+    --nav-active-bg: #042c53;
+    --nav-active-text: #b5d4f4;
   }
 }
 
@@ -168,8 +174,8 @@ a {
   color: var(--text);
 }
 .nav-item.active {
-  background: var(--accent-light);
-  color: var(--accent);
+  background: var(--nav-active-bg);
+  color: var(--nav-active-text);
   font-weight: 500;
 }
 .nav-item svg {
