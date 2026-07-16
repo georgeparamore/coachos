@@ -12,7 +12,10 @@ export type NavSection = {
 export const NAV_SECTIONS: NavSection[] = [
   {
     label: "Overview",
-    items: [{ href: "/dashboard", label: "Dashboard", icon: "grid" }],
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: "grid" },
+      { href: "/calendar", label: "Calendar", icon: "calendar" },
+    ],
   },
   {
     label: "Clients",

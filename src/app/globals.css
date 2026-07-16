@@ -806,6 +806,71 @@ select.form-input {
   font-size: 13px;
 }
 
+/* Calendar */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.calendar-month-label {
+  font-size: 15px;
+  font-weight: 600;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.calendar-weekday {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: center;
+  padding-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.calendar-day {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border);
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+  transition: border-color 0.12s, background 0.12s;
+}
+.calendar-day:hover {
+  border-color: var(--border-strong);
+}
+.calendar-day.is-outside {
+  opacity: 0.35;
+}
+.calendar-day.is-today {
+  border-color: var(--accent);
+}
+.calendar-day.is-selected {
+  background: var(--nav-active-bg);
+  border-color: var(--nav-active-text);
+}
+.calendar-day-number {
+  font-size: 12px;
+  font-weight: 500;
+}
+.calendar-day-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.calendar-day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;

@@ -37,11 +37,19 @@ same tokens, same layout, same components.
       not identity verification or a DocuSign-grade certificate, just a defensible record)
 - [ ] Courses & community are still stubbed with the ported UI and a "Phase N" notice
 
+## Calendar (added post-Phase-2)
+
+- [x] `/calendar`: month view + a day agenda, create/edit/delete events, optionally linked to a lead
+- [x] Dashboard shows today's date in the greeting and a "Today's schedule" card
+- [x] In-tab reminders via the browser Notification API — fires while the dashboard/calendar tab is
+      open, does **not** work if the tab/browser is closed (that needs a background job + push
+      subscription, which is Phase 4 territory alongside email notifications)
+
 ## Local setup
 
 1. Create a Supabase project.
-2. In the SQL editor, run `supabase/migrations/0001_init.sql`, then `0002_monetization.sql`, then
-   `0003_contract_audit_trail.sql`, in that order.
+2. In the SQL editor, run, in order: `supabase/migrations/0001_init.sql`, `0002_monetization.sql`,
+   `0003_contract_audit_trail.sql`, `0004_calendar.sql`.
 3. Copy `.env.example` to `.env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Project Settings → API
    - `SUPABASE_SERVICE_ROLE_KEY` — same page, the **secret** key (server-only, powers the public
