@@ -3,12 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { listTimezones } from "@/lib/timezone";
 
-export function BusinessProfileForm({ fullName, email }: { fullName: string; email: string }) {
+export function BusinessProfileForm({
+  fullName,
+  email,
+  timezone,
+}: {
+  fullName: string;
+  email: string;
+  timezone: string;
+}) {
   const router = useRouter();
   const [name, setName] = useState(fullName);
+  const [tz, setTz] = useState(timezone);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [timezones] = useState(() => listTimezones());
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -19,7 +30,7 @@ export function BusinessProfileForm({ fullName, email }: { fullName: string; ema
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      await supabase.from("profiles").update({ full_name: name }).eq("id", user.id);
+      await supabase.from("profiles").update({ full_name: name, timezone: tz }).eq("id", user.id);
     }
     setSaving(false);
     setSaved(true);
@@ -35,6 +46,16 @@ export function BusinessProfileForm({ fullName, email }: { fullName: string; ema
       <div className="form-row">
         <label className="form-label">Email address</label>
         <input className="form-input" value={email} disabled />
+      </div>
+      <div className="form-row">
+        <label className="form-label">Time zone</label>
+        <select className="form-input" value={tz} onChange={(e) => setTz(e.target.value)}>
+          {timezones.map((z) => (
+            <option key={z} value={z}>
+              {z.replace(/_/g, " ")}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="form-row">
         <label className="form-label">Custom domain (when live)</label>

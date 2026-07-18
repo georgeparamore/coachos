@@ -60,6 +60,21 @@ export function CalendarView({
 
   const selectedDayEvents = eventsByDay.get(selectedDate.toDateString()) ?? [];
 
+  const upcomingEvents = useMemo(() => {
+    const now = new Date();
+    return events
+      .filter((e) => new Date(e.start_time) >= now)
+      .sort((a, b) => a.start_time.localeCompare(b.start_time))
+      .slice(0, 8);
+  }, [events]);
+
+  function jumpToEvent(event: CalendarEvent) {
+    const date = new Date(event.start_time);
+    setSelectedDate(date);
+    setMonthCursor(startOfMonth(date));
+    setModalState({ event });
+  }
+
   async function handleSave(input: {
     title: string;
     description: string;
@@ -158,29 +173,52 @@ export function CalendarView({
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-title">
-            {selectedDate.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
-          </div>
-          <button className="btn btn-primary btn-sm" style={{ marginBottom: 14 }} onClick={() => setModalState({ event: null })}>
-            Add event
-          </button>
-          {selectedDayEvents.length === 0 ? (
-            <div className="sub">No events scheduled.</div>
-          ) : (
-            selectedDayEvents.map((event) => (
-              <div className="list-row list-row-clickable" key={event.id} onClick={() => setModalState({ event })}>
-                <div>
-                  <div className="name">{event.title}</div>
-                  <div className="sub">
-                    {new Date(event.start_time).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
-                    {event.location ? ` · ${event.location}` : ""}
+        <div>
+          <div className="card">
+            <div className="card-title">
+              {selectedDate.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
+            </div>
+            <button className="btn btn-primary btn-sm" style={{ marginBottom: 14 }} onClick={() => setModalState({ event: null })}>
+              Add event
+            </button>
+            {selectedDayEvents.length === 0 ? (
+              <div className="sub">No events scheduled.</div>
+            ) : (
+              selectedDayEvents.map((event) => (
+                <div className="list-row list-row-clickable" key={event.id} onClick={() => setModalState({ event })}>
+                  <div>
+                    <div className="name">{event.title}</div>
+                    <div className="sub">
+                      {new Date(event.start_time).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                      {event.location ? ` · ${event.location}` : ""}
+                    </div>
                   </div>
+                  <span className={`badge ${EVENT_TYPE_BADGE[event.event_type]}`}>{EVENT_TYPE_LABEL[event.event_type]}</span>
                 </div>
-                <span className={`badge ${EVENT_TYPE_BADGE[event.event_type]}`}>{EVENT_TYPE_LABEL[event.event_type]}</span>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
+
+          <div className="card">
+            <div className="card-title">Upcoming appointments</div>
+            {upcomingEvents.length === 0 ? (
+              <div className="sub">Nothing coming up.</div>
+            ) : (
+              upcomingEvents.map((event) => (
+                <div className="list-row list-row-clickable" key={event.id} onClick={() => jumpToEvent(event)}>
+                  <div>
+                    <div className="name">{event.title}</div>
+                    <div className="sub">
+                      {new Date(event.start_time).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                      {" · "}
+                      {new Date(event.start_time).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                    </div>
+                  </div>
+                  <span className={`badge ${EVENT_TYPE_BADGE[event.event_type]}`}>{EVENT_TYPE_LABEL[event.event_type]}</span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 

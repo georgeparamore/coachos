@@ -8,7 +8,7 @@ export default async function SettingsPage() {
   } = await supabase.auth.getUser();
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, email")
+    .select("full_name, email, timezone")
     .eq("id", user!.id)
     .single();
 
@@ -31,7 +31,11 @@ export default async function SettingsPage() {
       <div className="two-col">
         <div className="card">
           <div className="card-title">Business profile</div>
-          <BusinessProfileForm fullName={profile?.full_name ?? ""} email={profile?.email ?? user!.email ?? ""} />
+          <BusinessProfileForm
+            fullName={profile?.full_name ?? ""}
+            email={profile?.email ?? user!.email ?? ""}
+            timezone={profile?.timezone ?? "UTC"}
+          />
         </div>
 
         <div>
