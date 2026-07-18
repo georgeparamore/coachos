@@ -14,6 +14,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: "Overview",
     items: [
       { href: "/dashboard", label: "Dashboard", icon: "grid" },
+      { href: "/analytics", label: "Analytics", icon: "bar-chart" },
       { href: "/calendar", label: "Calendar", icon: "calendar" },
     ],
   },
