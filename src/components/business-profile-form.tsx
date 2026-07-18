@@ -51,8 +51,8 @@ export function BusinessProfileForm({
         <label className="form-label">Time zone</label>
         <select className="form-input" value={tz} onChange={(e) => setTz(e.target.value)}>
           {timezones.map((z) => (
-            <option key={z} value={z}>
-              {z.replace(/_/g, " ")}
+            <option key={z.value} value={z.value}>
+              {z.label}
             </option>
           ))}
         </select>

@@ -1,30 +1,31 @@
-export const FALLBACK_TIMEZONES = [
-  "UTC",
-  "America/New_York",
-  "America/Chicago",
-  "America/Denver",
-  "America/Los_Angeles",
-  "America/Anchorage",
-  "Pacific/Honolulu",
-  "Europe/London",
-  "Europe/Paris",
-  "Europe/Berlin",
-  "Asia/Dubai",
-  "Asia/Kolkata",
-  "Asia/Singapore",
-  "Asia/Tokyo",
-  "Australia/Sydney",
+// The common list most booking/scheduling sites offer, rather than the full
+// ~400-entry IANA database — easier to actually find your own timezone in.
+export const COMMON_TIMEZONES: { value: string; label: string }[] = [
+  { value: "Pacific/Honolulu", label: "Hawaii Time" },
+  { value: "America/Anchorage", label: "Alaska Time" },
+  { value: "America/Los_Angeles", label: "Pacific Time (US & Canada)" },
+  { value: "America/Denver", label: "Mountain Time (US & Canada)" },
+  { value: "America/Phoenix", label: "Arizona (no DST)" },
+  { value: "America/Chicago", label: "Central Time (US & Canada)" },
+  { value: "America/New_York", label: "Eastern Time (US & Canada)" },
+  { value: "America/Halifax", label: "Atlantic Time (Canada)" },
+  { value: "America/Sao_Paulo", label: "Brasília Time" },
+  { value: "UTC", label: "UTC" },
+  { value: "Europe/London", label: "London" },
+  { value: "Europe/Paris", label: "Central European Time (Paris, Berlin)" },
+  { value: "Europe/Athens", label: "Eastern European Time (Athens, Cairo)" },
+  { value: "Europe/Moscow", label: "Moscow" },
+  { value: "Asia/Dubai", label: "Dubai" },
+  { value: "Asia/Kolkata", label: "India" },
+  { value: "Asia/Bangkok", label: "Bangkok" },
+  { value: "Asia/Singapore", label: "Singapore / Hong Kong" },
+  { value: "Asia/Tokyo", label: "Tokyo / Seoul" },
+  { value: "Australia/Sydney", label: "Sydney" },
+  { value: "Pacific/Auckland", label: "Auckland" },
 ];
 
-export function listTimezones(): string[] {
-  if (typeof Intl.supportedValuesOf === "function") {
-    try {
-      return Intl.supportedValuesOf("timeZone");
-    } catch {
-      return FALLBACK_TIMEZONES;
-    }
-  }
-  return FALLBACK_TIMEZONES;
+export function listTimezones() {
+  return COMMON_TIMEZONES;
 }
 
 /** The UTC instants for local midnight → next local midnight, in the given IANA timezone. */
