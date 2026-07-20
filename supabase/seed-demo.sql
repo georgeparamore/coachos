@@ -9,7 +9,7 @@
 
 do $$
 declare
-  demo_coach_id uuid := 4767331f-e485-457a-8bb3-c7e2891f6351;
+  demo_coach_id uuid := '4767331f-e485-457a-8bb3-c7e2891f6351';
 begin
   insert into public.leads (coach_id, name, email, phone, source, stage, value_cents, fit_score, notes) values
     (demo_coach_id, 'Priya Patel', 'priya@example.com', null, 'Website form', 'new', null, null, null),
