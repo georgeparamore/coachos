@@ -45,6 +45,22 @@ same tokens, same layout, same components.
       open, does **not** work if the tab/browser is closed (that needs a background job + push
       subscription, which is Phase 4 territory alongside email notifications)
 
+## Demo login
+
+To let visitors try CoachOS without creating an account, add a "Try the demo" button to `/login`:
+
+1. Sign up a real coach account at `/signup` for the demo (a normal account, nothing special about it).
+2. Copy its `id` from Supabase: Table Editor → `profiles` → the row with that email.
+3. Run `supabase/seed-demo.sql` in the SQL Editor with that id swapped in — it fills the account with
+   sample leads and calendar events.
+4. Set `NEXT_PUBLIC_DEMO_EMAIL` / `NEXT_PUBLIC_DEMO_PASSWORD` (in `.env.local` and in Vercel) to that
+   account's credentials. The button only renders when both are set.
+
+This is a **shared, real, writable account** — anyone who clicks the button can add/edit/delete its
+data, and a banner says so while browsing it. There's no reset mechanism yet; if the demo data gets
+messy, just re-run `seed-demo.sql` (after clearing the account's existing rows) or rotate to a fresh
+account and update the env vars.
+
 ## Local setup
 
 1. Create a Supabase project.

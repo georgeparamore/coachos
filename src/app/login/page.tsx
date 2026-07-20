@@ -7,6 +7,9 @@ import { createClient } from "@/lib/supabase/client";
 
 type Role = "coach" | "client";
 
+const DEMO_EMAIL = process.env.NEXT_PUBLIC_DEMO_EMAIL;
+const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD;
+
 export default function LoginPage() {
   const router = useRouter();
   const [role, setRole] = useState<Role>("coach");
@@ -14,22 +17,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
+  async function signIn(emailToUse: string, passwordToUse: string, roleToCheck: Role) {
     const supabase = createClient();
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: emailToUse,
+      password: passwordToUse,
     });
 
     if (signInError) {
-      setError(signInError.message);
-      setLoading(false);
-      return;
+      return signInError.message;
     }
 
     const { data: profile } = await supabase
@@ -38,15 +36,32 @@ export default function LoginPage() {
       .eq("id", data.user.id)
       .single();
 
-    if (!profile || profile.role !== role) {
+    if (!profile || profile.role !== roleToCheck) {
       await supabase.auth.signOut();
-      setError(`No ${role} account found for these credentials.`);
-      setLoading(false);
-      return;
+      return `No ${roleToCheck} account found for these credentials.`;
     }
 
     router.push("/dashboard");
     router.refresh();
+    return null;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    const failure = await signIn(email, password, role);
+    if (failure) setError(failure);
+    setLoading(false);
+  }
+
+  async function handleDemo() {
+    if (!DEMO_EMAIL || !DEMO_PASSWORD) return;
+    setError(null);
+    setDemoLoading(true);
+    const failure = await signIn(DEMO_EMAIL, DEMO_PASSWORD, "coach");
+    if (failure) setError(failure);
+    setDemoLoading(false);
   }
 
   return (
@@ -66,6 +81,28 @@ export default function LoginPage() {
         <div className="page-sub" style={{ marginBottom: 20 }}>
           Sign in to your platform
         </div>
+
+        {DEMO_EMAIL && DEMO_PASSWORD && (
+          <>
+            <button
+              type="button"
+              className="btn btn-accent"
+              onClick={handleDemo}
+              disabled={demoLoading}
+              style={{ width: "100%", justifyContent: "center", marginBottom: 8 }}
+            >
+              {demoLoading ? "Loading demo…" : "Try the demo"}
+            </button>
+            <div className="sub" style={{ textAlign: "center", marginBottom: 18 }}>
+              Explore a live sample workspace — no account needed. Shared with other visitors, so data may change.
+            </div>
+            <div className="section-divider" style={{ margin: "0 0 18px" }}>
+              <div className="section-divider-line" />
+              <span className="section-divider-label">or sign in</span>
+              <div className="section-divider-line" />
+            </div>
+          </>
+        )}
 
         <div
           style={{

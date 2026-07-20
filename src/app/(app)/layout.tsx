@@ -25,6 +25,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .join("")
     .toUpperCase();
 
+  const isDemo = Boolean(process.env.NEXT_PUBLIC_DEMO_EMAIL) && user.email === process.env.NEXT_PUBLIC_DEMO_EMAIL;
+
   return (
     <div className="app">
       <Sidebar
@@ -32,7 +34,22 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         userInitials={initials || "C"}
         userPlan={profile?.role === "client" ? "Client" : "Coach"}
       />
-      <div className="main">{children}</div>
+      <div className="main">
+        {isDemo && (
+          <div
+            style={{
+              background: "var(--amber-bg)",
+              color: "var(--amber-text)",
+              fontSize: 12.5,
+              padding: "8px 32px",
+              textAlign: "center",
+            }}
+          >
+            You&apos;re viewing a shared demo workspace — changes are visible to other visitors and may be reset.
+          </div>
+        )}
+        {children}
+      </div>
     </div>
   );
 }
