@@ -1,16 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import { BusinessProfileForm } from "@/components/business-profile-form";
+import { DataLoadError } from "@/components/data-load-error";
+import { logServerError } from "@/lib/log-server-error";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("full_name, email, timezone")
     .eq("id", user!.id)
     .single();
+
+  if (error) await logServerError(error, "settings.load", { userId: user!.id, userEmail: user!.email });
 
   const integrations = [
     { name: "Stripe", sub: "Subscriptions & payments", envVar: "STRIPE_SECRET_KEY" },
@@ -27,6 +31,8 @@ export default async function SettingsPage() {
           <div className="page-sub">Manage your platform, branding, and integrations</div>
         </div>
       </div>
+
+      {error && <DataLoadError what="your profile" />}
 
       <div className="two-col">
         <div className="card">

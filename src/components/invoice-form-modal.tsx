@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Lead } from "@/lib/leads";
 import { getErrorMessage } from "@/lib/errors";
+import { useErrorToast } from "@/components/error-toast-provider";
 
 type Props = {
   leads: Lead[];
@@ -18,6 +19,7 @@ export function InvoiceFormModal({ leads, onClose, onCreated }: Props) {
   const [amount, setAmount] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showError } = useErrorToast();
 
   function handleLeadSelect(id: string) {
     setLeadId(id);
@@ -49,6 +51,7 @@ export function InvoiceFormModal({ leads, onClose, onCreated }: Props) {
       onCreated();
     } catch (err) {
       setError(getErrorMessage(err));
+      showError(err, "invoices.create");
     } finally {
       setSaving(false);
     }

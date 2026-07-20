@@ -11,9 +11,10 @@ type Props = {
   userName: string;
   userInitials: string;
   userPlan: string;
+  isAdmin?: boolean;
 };
 
-export function Sidebar({ userName, userInitials, userPlan }: Props) {
+export function Sidebar({ userName, userInitials, userPlan, isAdmin }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -46,6 +47,16 @@ export function Sidebar({ userName, userInitials, userPlan }: Props) {
           ))}
         </div>
       ))}
+
+      {isAdmin && (
+        <div>
+          <div className="nav-section">Admin</div>
+          <Link href="/admin/errors" className={`nav-item${pathname.startsWith("/admin/errors") ? " active" : ""}`}>
+            <NavIcon name="file-text" />
+            Error log
+          </Link>
+        </div>
+      )}
 
       <ThemeToggle />
 

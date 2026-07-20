@@ -5,6 +5,8 @@ import { formatCurrencyWhole } from "@/lib/analytics";
 import { StatTile } from "@/components/charts/stat-tile";
 import { BarList } from "@/components/charts/bar-list";
 import { SeriesChart } from "@/components/charts/series-chart";
+import { DataLoadError } from "@/components/data-load-error";
+import { logServerError } from "@/lib/log-server-error";
 
 const STAGE_CHART_COLOR: Record<string, string> = {
   new: "var(--chart-stage-new)",
@@ -27,7 +29,7 @@ export default async function AnalyticsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: leads }, { data: subscriptions }, { data: invoices }] = await Promise.all([
+  const [leadsRes, subsRes, invoicesRes] = await Promise.all([
     supabase
       .from("leads")
       .select("id, stage, source, value_cents, fit_score, created_at")
@@ -35,6 +37,16 @@ export default async function AnalyticsPage() {
     supabase.from("subscriptions").select("status, plan_key").eq("coach_id", user!.id),
     supabase.from("invoices").select("status, amount_cents, created_at").eq("coach_id", user!.id),
   ]);
+  const { data: leads } = leadsRes;
+  const { data: subscriptions } = subsRes;
+  const { data: invoices } = invoicesRes;
+
+  const queryErrors = [leadsRes.error, subsRes.error, invoicesRes.error].filter(Boolean);
+  if (queryErrors.length > 0) {
+    await Promise.all(
+      queryErrors.map((err) => logServerError(err, "analytics.load", { userId: user!.id, userEmail: user!.email })),
+    );
+  }
 
   const allLeads = leads ?? [];
   const allSubs = subscriptions ?? [];
@@ -123,6 +135,8 @@ export default async function AnalyticsPage() {
           <div className="page-sub">How your pipeline and revenue are trending</div>
         </div>
       </div>
+
+      {queryErrors.length > 0 && <DataLoadError what="some of your analytics data" />}
 
       <div className="metrics">
         <StatTile label="Win rate" value={`${winRate}%`} sub={`${signedCount} of ${totalLeads} leads signed`} />

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/sidebar";
+import { logServerError } from "@/lib/log-server-error";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -10,11 +11,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("full_name, email, role")
     .eq("id", user.id)
     .single();
+
+  if (profileError) {
+    // Falls back gracefully below (email/"Coach"), so no user-facing banner —
+    // but still worth a record for the admin.
+    await logServerError(profileError, "app-shell.profile-load", { userId: user.id, userEmail: user.email });
+  }
 
   const displayName = profile?.full_name || profile?.email || user.email || "Coach";
   const initials = displayName
@@ -26,6 +33,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .toUpperCase();
 
   const isDemo = Boolean(process.env.NEXT_PUBLIC_DEMO_EMAIL) && user.email === process.env.NEXT_PUBLIC_DEMO_EMAIL;
+  const isAdmin = Boolean(process.env.ADMIN_EMAIL) && user.email === process.env.ADMIN_EMAIL;
 
   return (
     <div className="app">
@@ -33,6 +41,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         userName={displayName}
         userInitials={initials || "C"}
         userPlan={profile?.role === "client" ? "Client" : "Coach"}
+        isAdmin={isAdmin}
       />
       <div className="main">
         {isDemo && (

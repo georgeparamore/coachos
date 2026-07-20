@@ -61,11 +61,25 @@ data, and a banner says so while browsing it. There's no reset mechanism yet; if
 messy, just re-run `seed-demo.sql` (after clearing the account's existing rows) or rotate to a fresh
 account and update the env vars.
 
+## Error handling & the feedback loop
+
+- Every data fetch and mutation across the app is wrapped: server-side query failures show a plain
+  "couldn't load X" notice instead of silently rendering an empty list, and client-side mutation
+  failures (save/delete/etc.) show the real reason inline **and** as a dismissable corner toast.
+- Every reported error is also logged to a Supabase `error_logs` table (migration `0006`), with a
+  short reference id shown in the toast so a user can quote it if they reach out.
+- Unhandled crashes get a friendly fallback screen (via Next's `error.tsx` boundaries) instead of a
+  blank page or a stack trace — never the raw Next.js dev error overlay in production.
+- Set `ADMIN_EMAIL` to your own coach account's email to get an **Error log** link in the sidebar
+  (`/admin/errors`) listing the last 100 reported errors — that's the feedback loop: you don't have
+  to wait for someone to tell you something broke.
+
 ## Local setup
 
 1. Create a Supabase project.
 2. In the SQL editor, run, in order: `supabase/migrations/0001_init.sql`, `0002_monetization.sql`,
-   `0003_contract_audit_trail.sql`, `0004_calendar.sql`.
+   `0003_contract_audit_trail.sql`, `0004_calendar.sql`, `0005_profile_timezone.sql`,
+   `0006_error_logs.sql`.
 3. Copy `.env.example` to `.env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Project Settings → API
    - `SUPABASE_SERVICE_ROLE_KEY` — same page, the **secret** key (server-only, powers the public

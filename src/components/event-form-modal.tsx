@@ -5,6 +5,7 @@ import type { CalendarEvent, EventType } from "@/lib/events";
 import { EVENT_TYPE_LABEL } from "@/lib/events";
 import type { Lead } from "@/lib/leads";
 import { getErrorMessage } from "@/lib/errors";
+import { useErrorToast } from "@/components/error-toast-provider";
 
 function toLocalInputValue(date: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -49,6 +50,7 @@ export function EventFormModal({
   const [description, setDescription] = useState(event?.description ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showError } = useErrorToast();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,6 +68,7 @@ export function EventFormModal({
       });
     } catch (err) {
       setError(getErrorMessage(err));
+      showError(err, "calendar.event-save");
     } finally {
       setSaving(false);
     }
@@ -149,6 +152,9 @@ export function EventFormModal({
                   setSaving(true);
                   try {
                     await onDelete();
+                  } catch (err) {
+                    setError(getErrorMessage(err));
+                    showError(err, "calendar.event-delete");
                   } finally {
                     setSaving(false);
                   }

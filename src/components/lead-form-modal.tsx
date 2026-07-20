@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LEAD_STAGES, type Lead, type LeadInput, type LeadStage } from "@/lib/leads";
 import { getErrorMessage } from "@/lib/errors";
+import { useErrorToast } from "@/components/error-toast-provider";
 
 type Props = {
   lead: Lead | null;
@@ -22,6 +23,7 @@ export function LeadFormModal({ lead, onClose, onSave, onDelete }: Props) {
   const [notes, setNotes] = useState(lead?.notes ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showError } = useErrorToast();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,6 +42,7 @@ export function LeadFormModal({ lead, onClose, onSave, onDelete }: Props) {
       });
     } catch (err) {
       setError(getErrorMessage(err));
+      showError(err, "crm.lead-save");
     } finally {
       setSaving(false);
     }
@@ -124,6 +127,9 @@ export function LeadFormModal({ lead, onClose, onSave, onDelete }: Props) {
                   setSaving(true);
                   try {
                     await onDelete();
+                  } catch (err) {
+                    setError(getErrorMessage(err));
+                    showError(err, "crm.lead-delete");
                   } finally {
                     setSaving(false);
                   }

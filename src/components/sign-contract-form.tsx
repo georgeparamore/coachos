@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { getErrorMessage } from "@/lib/errors";
+import { useErrorToast } from "@/components/error-toast-provider";
 
 export function SignContractForm({ token }: { token: string }) {
   const [signerName, setSignerName] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [signed, setSigned] = useState(false);
+  const { showError } = useErrorToast();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,6 +26,7 @@ export function SignContractForm({ token }: { token: string }) {
       setSigned(true);
     } catch (err) {
       setError(getErrorMessage(err));
+      showError(err, "contract-sign.public");
     } finally {
       setSaving(false);
     }

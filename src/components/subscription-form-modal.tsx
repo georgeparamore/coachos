@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Lead } from "@/lib/leads";
 import { getErrorMessage } from "@/lib/errors";
+import { useErrorToast } from "@/components/error-toast-provider";
 
 const PLAN_OPTIONS = [
   { key: "starter", label: "Starter — $120/mo" },
@@ -26,6 +27,7 @@ export function SubscriptionFormModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const { showError } = useErrorToast();
 
   function handleLeadSelect(id: string) {
     setLeadId(id);
@@ -52,6 +54,7 @@ export function SubscriptionFormModal({
       onCreated();
     } catch (err) {
       setError(getErrorMessage(err));
+      showError(err, "subscriptions.create-checkout");
     } finally {
       setSaving(false);
     }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ErrorToastProvider } from "@/components/error-toast-provider";
 
 export const metadata: Metadata = {
   title: "CoachOS — Your platform",
@@ -26,7 +27,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <ErrorToastProvider>{children}</ErrorToastProvider>
+      </body>
     </html>
   );
 }
